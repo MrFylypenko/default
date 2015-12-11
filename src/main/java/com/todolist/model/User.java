@@ -20,16 +20,16 @@ import org.hibernate.validator.constraints.NotEmpty;
 @NamedQuery(name = "selectAllUsers", query = "SELECT a FROM User a")
 public class User {
 
-	@Length(min = 5, max = 45)
+	//@Length(min = 5, max = 45)
 	private String username;
 
-	@Length(min = 5, max = 60)
+	//@Length(min = 5, max = 60)
 	private String password;
 
 	private String confirmPassword;
 
 	@NotEmpty
-	@Email
+	//@Email
 	private String email;
 
 	private boolean enabled;

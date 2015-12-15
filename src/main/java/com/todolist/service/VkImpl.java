@@ -9,6 +9,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.TokenBasedRememberMeServices;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,10 +28,7 @@ import java.util.Set;
 @Service
 public class VkImpl implements Vk {
 
-
     private final String USER_AGENT = "Mozilla/5.0";
-
-
 
     @Autowired
     UserDao userDao;
@@ -40,23 +39,15 @@ public class VkImpl implements Vk {
 
     String redirect_uri = "http://192.168.50.113:8080";
 
-
-
     @Transactional
     public String getToken (String code)throws Exception {
 
         String url = "https://oauth.vk.com/access_token?client_id=5181063&client_secret=sDAvKlcVb54De5ffT9ho&redirect_uri="
                 + redirect_uri + "&code=" + code ;
 
-
         URL obj = new URL(url);
         HttpsURLConnection con= (HttpsURLConnection) obj.openConnection();
         con.setRequestProperty("User-Agent", USER_AGENT);
-
-
-        int responseCode = con.getResponseCode();
-        System.out.println("\nSending 'GET' request to URL : " + url);
-        System.out.println("Response Code : " + responseCode);
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
@@ -72,9 +63,6 @@ public class VkImpl implements Vk {
 
         final String userId = jsonObj.getInt("user_id") + "";
         String token = jsonObj.getString("access_token");
-
-
-
         User user = userDao.findByUserName(userId);
 
         if (user == null) {
@@ -92,7 +80,6 @@ public class VkImpl implements Vk {
             userDao.addUser(user);
         }
 
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         final Authentication authentication2 = authentication;
@@ -100,8 +87,6 @@ public class VkImpl implements Vk {
         final MyUserDetailsService userDetailsService = new MyUserDetailsService();
 
         final org.springframework.security.core.userdetails.UserDetails u =  userDetailsService.getUser(user);
-
-
 
         Authentication trustedAuthentication = new Authentication () {
             private String name = userId;
@@ -150,9 +135,9 @@ public class VkImpl implements Vk {
 
 
 
+
+
         return token;
     }
-
-
 
 }

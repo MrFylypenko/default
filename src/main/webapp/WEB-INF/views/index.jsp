@@ -70,6 +70,16 @@
 
 			<jsp:include page="${page}"></jsp:include>
 		</div>
+
+		<sec:authorize access="isRememberMe()">
+			<h2># This user is login by "Remember Me Cookies".</h2>
+		</sec:authorize>
+
+		<sec:authorize access="isFullyAuthenticated()">
+			<h2># This user is login by username / password.</h2>
+		</sec:authorize>
+
+
 	</div>
 </body>
 </html>

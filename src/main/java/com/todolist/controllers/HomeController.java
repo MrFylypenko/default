@@ -2,11 +2,14 @@ package com.todolist.controllers;
 
 import java.util.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import com.todolist.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -25,6 +28,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.todolist.model.Task;
 import com.todolist.model.User;
 import com.todolist.model.UserRole;
+
+import 	org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
 
 /**
  * Handles requests for the application home page.
@@ -81,7 +86,7 @@ public class HomeController {
 
 
 
-	@RequestMapping(value = "reg/{userName}", method = RequestMethod.GET)
+	/*@RequestMapping(value = "reg/{userName}", method = RequestMethod.GET)
 	public String homes(@PathVariable("userName") final String userName) {
 
 
@@ -164,7 +169,7 @@ public class HomeController {
 
 
 		return "redirect:/index";
-	}
+	}*/
 
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
@@ -174,15 +179,32 @@ public class HomeController {
 
 
 
-
-
-
 @Autowired
 	Vk vk;
 
+
+
+	@Autowired
+	@Qualifier("rememberMeAuthenticationProvider")
+	PersistentTokenBasedRememberMeServices persistentTokenBasedRememberMeServices;
+
+
 	@RequestMapping(value = "/", method = RequestMethod.GET, params = {"code"})
-	public String home2(@RequestParam(value = "code") String code) throws Exception {
+	public String home2(@RequestParam(value = "code") String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
+
+		System.out.println(request.getParameter("_spring_security_remember_me") + "   ");
+		//response.
+
+
+		return "redirect:/enter?code=" + request.getParameter("code") + "&_spring_security_remember_me=true";
+	}
+
+	@RequestMapping(value = "/enter", method = RequestMethod.GET, params = {"code"})
+	public String home3(@RequestParam(value = "code") String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
+
 		vk.getToken(code);
+		persistentTokenBasedRememberMeServices.loginSuccess(request, response, SecurityContextHolder.getContext().getAuthentication());
 
 		return "redirect:/index";
 	}

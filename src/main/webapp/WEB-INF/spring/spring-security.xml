@@ -12,7 +12,12 @@
 		<anonymous username="anonymousUser" granted-authority="hasRole('ROLE_ANONYMOUS')" />
 		<form-login login-page="/login" default-target-url="/index"
 			authentication-failure-url="/login?error=true" />
-		<logout logout-url="/logout" logout-success-url="/index" />
+		<logout logout-url="/logout" logout-success-url="/index" delete-cookies="remember-me" invalidate-session="true"/>
+
+		<remember-me
+				token-validity-seconds="1209600"
+				data-source-ref="dataSource" />
+		<!--remember-me-parameter="remember-me"-->
 	</http>
 
 	<!-- UserDetailService -->
@@ -21,5 +26,7 @@
 			<password-encoder hash="bcrypt" />
 		</authentication-provider>
 	</authentication-manager>
+
+
 
 </beans:beans>

@@ -1,25 +1,23 @@
 package com.todolist.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
 @Table(name = "user")
 @NamedQuery(name = "selectAllUsers", query = "SELECT a FROM User a")
-public class User {
+public class User implements UserDetails{
 
+	public User() {
+	}
 	//@Length(min = 5, max = 45)
 	private String username;
 
@@ -28,22 +26,13 @@ public class User {
 
 	private String confirmPassword;
 
-	@NotEmpty
+	//@NotEmpty
 	//@Email
 	private String email;
 
 	private boolean enabled;
 
 	private Set<UserRole> userRole = new HashSet<UserRole>(0);
-
-	@Override
-	public String toString() {
-		return "User [username=" + username + ", password=" + password
-				+ ", enabled=" + enabled + ", userRole=" + userRole + "]";
-	}
-
-	public User() {
-	}
 
 	public User(String username, String password, boolean enabled) {
 		this.username = username;
@@ -65,8 +54,41 @@ public class User {
 		return this.username;
 	}
 
+	@Override
+	@Transient
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	@Transient
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	@Transient
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
 	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	@Override
+	@Transient
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+
+		Set<GrantedAuthority> setAuths = new HashSet<GrantedAuthority>();
+
+		for (UserRole role : userRole) {
+			setAuths.add(new SimpleGrantedAuthority(role.getRole()));
+		}
+
+		List<GrantedAuthority> result = new ArrayList<GrantedAuthority>(
+				setAuths);
+		return result;
 	}
 
 	@Column(name = "password", nullable = false, length = 60)

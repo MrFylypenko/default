@@ -22,16 +22,25 @@
 		<property name="persistenceUnitName" value="mySQLPersistence" />
 	</bean>-->
 
-
 	<!-- Database -->
-	<jdbc:embedded-database id="datasource" type="H2">
+	<!--<jdbc:embedded-database id="datasource" type="H2">
 	</jdbc:embedded-database>
+-->
+
+	<bean id="dataSource"
+		  class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://192.168.50.77:3306/vanotodolist" />
+		<property name="username" value="vanotodolist" />
+		<property name="password" value="vanotodolist" />
+	</bean>
+
 
 	<!-- EntityManager Factory -->
 	<bean id="entityManagerFactory"
 		  class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="datasource" />
-		<property name="persistenceUnitName" value="H2test" />
+		<!--<property name="dataSource" ref="datasource" />-->
+		<property name="persistenceUnitName" value="mySQLPersistence" />
 	</bean>
 
 	<!-- TransactionManager -->
@@ -43,6 +52,28 @@
 
 	<!-- JPA Repositories -->
 	<jpa:repositories base-package="com.todolist.repositories"></jpa:repositories>
+
+
+	<!-- Persistent Remember Me Service -->
+	<bean id="rememberMeAuthenticationProvider" class=
+			"org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices">
+		<constructor-arg type="java.lang.String" value="remember-me"></constructor-arg>
+		<constructor-arg ref="jdbcTokenRepository"></constructor-arg>
+		<constructor-arg ref="userDetailsService"></constructor-arg>
+		<!--
+		<property name="key" value="remember-me" />
+		<property name="tokenRepository" ref="jdbcTokenRepository" />
+		<property name="userDetailsService" ref="userDetailsService" />-->
+	</bean>
+
+	<!-- Uses a database table to maintain a set of persistent login data -->
+	<bean id="jdbcTokenRepository"
+				class="org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl">
+		<property name="createTableOnStartup" value="false" />
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+
 
 
 </beans>

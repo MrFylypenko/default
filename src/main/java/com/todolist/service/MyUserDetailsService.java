@@ -27,6 +27,24 @@ public class MyUserDetailsService implements UserDetailsService {
 			throws UsernameNotFoundException {
 
 		com.todolist.model.User user = userDao.findByUserName(username);
+		if (user == null) {
+			throw new UsernameNotFoundException("User not found");
+		}
+		return user;
+
+	}
+
+
+
+
+
+
+
+/*	@Override
+	public UserDetails loadUserByUsername(final String username)
+			throws UsernameNotFoundException {
+
+		com.todolist.model.User user = userDao.findByUserName(username);
 
 		if (user == null) {
 			throw new UsernameNotFoundException("User not found");
@@ -37,7 +55,7 @@ public class MyUserDetailsService implements UserDetailsService {
 
 		return buildUserForAuthentication(user, authorities);
 
-	}
+	}*/
 
 
 

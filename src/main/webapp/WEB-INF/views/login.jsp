@@ -33,6 +33,9 @@
 				<td colspan='2'><input name="submit" type="submit"
 					value="<spring:message code="label.enter" />" /></td>
 			</tr>
+			<tr>
+				<td>Remember Me: <input type="checkbox" name="remember-me" /></td>
+			</tr>
 		</table>
 	</form>
 </div>
